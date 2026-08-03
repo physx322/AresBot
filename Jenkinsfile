@@ -10,7 +10,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/physx322/ClicBot.git',
-                    credentialsId: 'github-credentials'
+                    credentialsId: 'fg'
             }
         }
 
