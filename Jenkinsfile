@@ -60,7 +60,6 @@ post {
                         **Projet:** ${env.JOB_NAME}
                         **Branche:** ${env.GIT_BRANCH}
                         **Commit:** ${env.GIT_COMMIT?.take(7)}
-                        **Desctiption** ${env.GIT_COMMIT?.}
                         **Auteur:** ${env.GIT_AUTHOR_NAME ?: 'N/A'}
                         **Durée:** ${duration}
                         **Étape échouée:** ${env.STAGE_NAME ?: 'Inconnue'}
