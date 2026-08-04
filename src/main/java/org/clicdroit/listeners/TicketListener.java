@@ -1,6 +1,7 @@
 package org.clicdroit.listeners;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.channel.TextChannelCreateEvent;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.core.object.PermissionOverwrite;
 import discord4j.core.object.entity.Guild;
@@ -10,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
-public class TIcketListener {
+public class TicketListener {
     public static Mono<Void> CreateTicketSalon(ButtonInteractionEvent event) {
         if (!event.getCustomId().equals("ticket")) {
             return Mono.empty();
@@ -36,5 +37,12 @@ public class TIcketListener {
                     ));
                 })
                 .then(event.reply("Salon créé !").withEphemeral(true));
+    }
+
+    public static Mono<Void> sendTicketDashboard(TextChannelCreateEvent event) {
+        if (event.getChannel().getName().startsWith("ticket-")) {
+            return event.getChannel().createMessage("bienvenue dans votre ticket").then();
+        }
+        return Mono.empty();
     }
 }

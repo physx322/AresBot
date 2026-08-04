@@ -2,14 +2,16 @@ package org.clicdroit;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.channel.TextChannelCreateEvent;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.rest.RestClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.clicdroit.commands.CommandRegistry;
 import org.clicdroit.listeners.ListenerRegistry;
+import org.clicdroit.listeners.TicketListener;
 
-import static org.clicdroit.listeners.TIcketListener.CreateTicketSalon;
+import static org.clicdroit.listeners.TicketListener.CreateTicketSalon;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
@@ -26,6 +28,9 @@ public class Main {
                     default -> event.reply("Action inconnue");
                 }).subscribe();
 
+        gateway.on(TextChannelCreateEvent.class)
+                .flatMap(TicketListener::sendTicketDashboard)
+                .subscribe();
         // Registery des commandes slash.
         CommandRegistry registry = new CommandRegistry();
         registry.registerToDiscord(RestClient.create(client.getCoreResources().getToken()), 1396773019690729524L);
