@@ -13,6 +13,7 @@ public class CommandRegistry {
 
     public CommandRegistry() {
         register(new PingCommand());
+        register(new StackCommand());
     }
 
     private void register(ISlashCommand command) {

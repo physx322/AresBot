@@ -3,7 +3,6 @@ package org.clicdroit;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
-import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.rest.RestClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
