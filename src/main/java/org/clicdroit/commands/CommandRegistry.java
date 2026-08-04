@@ -14,6 +14,7 @@ public class CommandRegistry {
     public CommandRegistry() {
         register(new PingCommand());
         register(new StackCommand());
+        register(new TicketCommand());
     }
 
     private void register(ISlashCommand command) {
