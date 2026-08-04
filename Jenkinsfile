@@ -27,28 +27,49 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_URL')]) {
+post {
+    success {
+        withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_URL')]) {
+            script {
+                def duration = currentBuild.durationString.replace(' and counting', '')
                 discordSend(
                     webhookURL: "${DISCORD_URL}",
                     title: "✅ Build réussi — ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    description: "Le build s'est terminé avec succès.",
+                    description: """
+                        **Projet:** ${env.JOB_NAME}
+                        **Branche:** ${env.GIT_BRANCH}
+                        **Commit:** ${env.GIT_COMMIT?.take(7)}
+                        **Auteur:** ${env.GIT_AUTHOR_NAME ?: 'N/A'}
+                        **Durée:** ${duration}
+                    """,
                     link: env.BUILD_URL,
-                    successful: true
-                )
-            }
-        }
-        failure {
-            withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_URL')]) {
-                discordSend(
-                    webhookURL: "${DISCORD_URL}",
-                    title: "❌ Build échoué — ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    description: "Le build a échoué.",
-                    link: env.BUILD_URL,
-                    result: currentBuild.currentResult
+                    successful: true,
+                    footer: "Jenkins Pipeline"
                 )
             }
         }
     }
+    failure {
+        withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_URL')]) {
+            script {
+                def duration = currentBuild.durationString.replace(' and counting', '')
+                discordSend(
+                    webhookURL: "${DISCORD_URL}",
+                    title: "❌ Build échoué — ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    description: """
+                        **Projet:** ${env.JOB_NAME}
+                        **Branche:** ${env.GIT_BRANCH}
+                        **Commit:** ${env.GIT_COMMIT?.take(7)}
+                        **Auteur:** ${env.GIT_AUTHOR_NAME ?: 'N/A'}
+                        **Durée:** ${duration}
+                        **Étape échouée:** ${env.STAGE_NAME ?: 'Inconnue'}
+                    """,
+                    link: env.BUILD_URL,
+                    result: currentBuild.currentResult,
+                    footer: "Jenkins Pipeline"
+                )
+            }
+        }
+    }
+}
 }
