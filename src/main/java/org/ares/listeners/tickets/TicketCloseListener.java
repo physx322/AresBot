@@ -5,11 +5,13 @@ import reactor.core.publisher.Mono;
 
 public class TicketCloseListener {
 
-    public static Mono<Void> closeTicketRequest(ButtonInteractionEvent event) {
-        if (event.getCustomId().equals("close_ticket")) {
+    public static Mono<Void> CloseTicketRequest(ButtonInteractionEvent event) {
+        if (!event.getCustomId().equals("close_ticket")) {
            return Mono.empty();
         }
-        return event.getInteraction().getChannel()
+        return event.deferReply().withEphemeral(true)
+                .then(event.getInteraction().getChannel())
                 .flatMap(messageChannel -> messageChannel.delete("Ticket fermé par " + event.getInteraction().getUser().getUsername()));
     }
+
 }

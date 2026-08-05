@@ -24,14 +24,31 @@ public class TicketCommand implements ISlashCommand {
 
     @Override
     public Mono<Void> handle(ChatInputInteractionEvent event) {
-        EmbedCreateSpec embed = EmbedCreateSpec.builder()
-                .title("Contacté le staff")
-                .description("Toute ouverture abusive d'un ticket sera sanctionné")
-                .build();
-        return event.reply(InteractionApplicationCommandCallbackSpec.builder()
-                        .addEmbed(embed)
-                        .build().withComponents(ActionRow.of(
-                                Button.primary("ticket", "Ouvrir un ticket")
-                        )));
+        return Mono.justOrEmpty(event.getInteraction().getMember())
+                .flatMap(member ->
+                        member.getRoles()
+                                .filter(role -> role.getName().equals("Fondateur"))
+                                .hasElements()
+                                .flatMap(isAdmin -> {
+                                    if (!isAdmin) {
+                                        return event.reply("Vous n'avez pas la permission d'utiliser cette commande.");
+                                    }
+
+                                    EmbedCreateSpec embed = EmbedCreateSpec.builder()
+                                            .title("Contacter le staff")
+                                            .description("Toute ouverture abusive d'un ticket sera sanctionnée.")
+                                            .build();
+
+                                    return event.reply(
+                                            InteractionApplicationCommandCallbackSpec.builder()
+                                                    .addEmbed(embed)
+                                                    .addComponent(ActionRow.of(
+                                                            Button.primary("ticket", "Ouvrir un ticket")
+                                                    ))
+                                                    .build()
+                                    );
+                                })
+                )
+                .switchIfEmpty(event.reply("Impossible de récupérer le membre."));
     }
 }
