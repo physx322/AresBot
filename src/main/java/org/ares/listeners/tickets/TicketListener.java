@@ -35,8 +35,8 @@ public class TicketListener {
 
                             PermissionOverwrite.forMember(
                                     event.getUser().getId(),
-                                    PermissionSet.none(),
-                                    PermissionSet.of(Permission.VIEW_CHANNEL, Permission.SEND_MESSAGES)
+                                    PermissionSet.of(Permission.VIEW_CHANNEL, Permission.SEND_MESSAGES),
+                                    PermissionSet.none()
                             )
                     ));
                 })
