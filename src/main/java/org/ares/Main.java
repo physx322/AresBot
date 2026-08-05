@@ -1,4 +1,4 @@
-package org.clicdroit;
+package org.ares;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
@@ -7,11 +7,12 @@ import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.rest.RestClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.clicdroit.commands.CommandRegistry;
-import org.clicdroit.listeners.ListenerRegistry;
-import org.clicdroit.listeners.TicketListener;
+import org.ares.commands.CommandRegistry;
+import org.ares.listeners.ListenerRegistry;
+import org.ares.listeners.tickets.TicketCloseListener;
+import org.ares.listeners.tickets.TicketListener;
 
-import static org.clicdroit.listeners.TicketListener.CreateTicketSalon;
+import static org.ares.listeners.tickets.TicketListener.CreateTicketSalon;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
@@ -25,12 +26,14 @@ public class Main {
                 switch (event.getCustomId()) {
                     case "main" -> event.reply("Bouton actionné").withEphemeral(true);
                     case "ticket" -> CreateTicketSalon(event);
+                    case "close_ticket" -> TicketCloseListener.closeTicketRequest(event);
                     default -> event.reply("Action inconnue");
                 }).subscribe();
 
         gateway.on(TextChannelCreateEvent.class)
                 .flatMap(TicketListener::sendTicketDashboard)
                 .subscribe();
+
         // Registery des commandes slash.
         CommandRegistry registry = new CommandRegistry();
         registry.registerToDiscord(RestClient.create(client.getCoreResources().getToken()), 1396773019690729524L);

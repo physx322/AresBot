@@ -1,4 +1,4 @@
-package org.clicdroit.listeners;
+package org.ares.listeners.tickets;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.channel.TextChannelCreateEvent;

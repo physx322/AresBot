@@ -1,4 +1,4 @@
-package org.clicdroit.commands;
+package org.ares.commands;
 
 import discord4j.core.GatewayDiscordClient;
 import discord4j.rest.RestClient;

@@ -1,4 +1,4 @@
-package org.clicdroit.commands;
+package org.ares.commands;
 
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.spec.EmbedCreateSpec;
