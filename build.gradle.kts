@@ -13,6 +13,7 @@ dependencies {
     implementation("com.discord4j:discord4j-core:3.3.2")
     implementation("org.apache.logging.log4j:log4j:2.17.1")
     implementation("org.apache.logging.log4j:log4j-api:2.17.1")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
 }
 
 tasks.test {

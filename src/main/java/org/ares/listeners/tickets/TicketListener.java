@@ -6,6 +6,7 @@ import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.core.object.PermissionOverwrite;
 import discord4j.core.object.component.*;
 import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.channel.Category;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.core.spec.TextChannelCreateSpec;
@@ -23,14 +24,20 @@ public class TicketListener {
 
     public static Mono<Void> createTicketSalon(ButtonInteractionEvent event) {
         Guild guild = event.getInteraction().getGuild().block();
-        var categoryId = 1534193855363289159L;
-        assert guild != null;
+        Category category = guild.getChannels()
+                .ofType(Category.class)
+                .filter(cat -> cat.getName().equalsIgnoreCase("\uD83C\uDFAB Tickets"))
+                .next()
+                .block();
+        if (category == null) {
+            return event.reply("La catégorie 'Ticket' n'existe pas sur ce serveur !").withEphemeral(true);
+        }
         if (tickets.containsValue(event.getUser().getUsername())) {
             return event.reply("Vous avez déja un ticket d'ouvert !").withEphemeral(true);
         } else {
             return guild.createTextChannel(TextChannelCreateSpec.builder()
                     .name("ticket-" + event.getUser().getUsername())
-                    .parentId(Snowflake.of(categoryId))
+                    .parentId(category.getId())
                     .permissionOverwrites(Set.of(
                             PermissionOverwrite.forRole(
                                     guild.getId(),
