@@ -5,12 +5,12 @@ import discord4j.core.object.entity.PartialMember;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 public class TicketCloseListener {
 
     public static Mono<Void> closeTicketRequest(ButtonInteractionEvent event) {
-        if (!event.getCustomId().equals("close_ticket")) {
-            return Mono.empty();
-        }
+        Map<Long, String> myTickets = TicketListener.tickets;
         return event.getInteraction().getMember()
                 .map(PartialMember::getBasePermissions)
                 .orElse(Mono.empty())
@@ -18,8 +18,9 @@ public class TicketCloseListener {
                     if (permissions.contains(Permission.ADMINISTRATOR)) {
                         return event.deferReply().withEphemeral(true)
                                 .then(event.getInteraction().getChannel())
-                                .flatMap(messageChannel -> messageChannel.delete(
-                                        "Ticket fermé par " + event.getInteraction().getUser().getUsername()));
+                                .flatMap(messageChannel ->
+                                        messageChannel.delete("Ticket fermé par " + event.getInteraction().getUser().getUsername())
+                                );
                     }
                     return event.reply("Vous n'avez pas la permission de faire cela").withEphemeral(true);
                 });

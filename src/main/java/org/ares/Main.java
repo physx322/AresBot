@@ -4,7 +4,10 @@ import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.channel.TextChannelCreateEvent;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
+import discord4j.core.object.presence.ClientActivity;
+import discord4j.core.object.presence.ClientPresence;
 import discord4j.rest.RestClient;
+import io.netty.handler.ssl.ClientAuth;
 import org.ares.commands.CommandRegistry;
 import org.ares.listeners.ListenerRegistry;
 import org.ares.listeners.tickets.TicketCloseListener;
@@ -17,6 +20,7 @@ public class Main {
     public static void main(String[] args) {
         DiscordClient client = DiscordClient.create(System.getenv("BOT_TOKEN")); // Créez une variable d'environement au lancement appelé "BOT_TOKEN".
         GatewayDiscordClient gateway = client.login().block();
+        ClientPresence.online(ClientActivity.streaming("Regarde ClicDroit", "https://twitch.tv/"));
 
         // Listeners des events bouton et autres.
         gateway.on(ButtonInteractionEvent.class, event ->
