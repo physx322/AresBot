@@ -23,7 +23,7 @@ public class Main {
                 switch (event.getCustomId()) {
                     case "main" -> event.reply("Bouton actionné").withEphemeral(true);
                     case "ticket" -> createTicketSalon(event);
-                    case "close_ticket" -> TicketCloseListener.CloseTicketRequest(event);
+                    case "close_ticket" -> TicketCloseListener.closeTicketRequest(event);
                     default -> event.reply("Action inconnue").withEphemeral(true);
                 }).subscribe();
 

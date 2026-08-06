@@ -1,17 +1,18 @@
 package org.ares.listeners.tickets;
 
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
+import discord4j.core.object.entity.PartialMember;
 import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
 public class TicketCloseListener {
 
-    public static Mono<Void> CloseTicketRequest(ButtonInteractionEvent event) {
+    public static Mono<Void> closeTicketRequest(ButtonInteractionEvent event) {
         if (!event.getCustomId().equals("close_ticket")) {
             return Mono.empty();
         }
         return event.getInteraction().getMember()
-                .map(member -> member.getBasePermissions())
+                .map(PartialMember::getBasePermissions)
                 .orElse(Mono.empty())
                 .flatMap(permissions -> {
                     if (permissions.contains(Permission.ADMINISTRATOR)) {
