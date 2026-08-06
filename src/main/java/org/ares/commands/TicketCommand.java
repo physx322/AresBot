@@ -34,6 +34,8 @@ public class TicketCommand implements ISlashCommand {
                                         return event.reply("Vous n'avez pas la permission d'utiliser cette commande.");
                                     }
 
+
+
                                     EmbedCreateSpec embed = EmbedCreateSpec.builder()
                                             .title("Contacter le staff")
                                             .description("Toute ouverture abusive d'un ticket sera sanctionnée.")

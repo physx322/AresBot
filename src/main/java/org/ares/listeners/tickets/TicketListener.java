@@ -8,6 +8,7 @@ import discord4j.core.object.component.*;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
+import discord4j.core.spec.TextChannelCreateSpec;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import reactor.core.publisher.Mono;
@@ -16,31 +17,31 @@ import java.util.List;
 import java.util.Set;
 
 public class TicketListener {
-    public static Mono<Void> CreateTicketSalon(ButtonInteractionEvent event) {
+
+    public static Mono<Void> createTicketSalon(ButtonInteractionEvent event) {
         if (!event.getCustomId().equals("ticket")) {
             return Mono.empty();
         }
         Guild guild = event.getInteraction().getGuild().block();
         var categoryId = 1534193855363289159L;
         assert guild != null;
-        return guild.createTextChannel(channel -> {
-                    channel.setName("ticket-" + event.getUser().getUsername());
-                    channel.setParentId(Snowflake.of(categoryId));
-                    channel.setPermissionOverwrites(Set.of(
-                            PermissionOverwrite.forRole(
-                                    guild.getId(),
-                                    PermissionSet.none(),
-                                    PermissionSet.of(Permission.VIEW_CHANNEL)
-                            ),
+        return guild.createTextChannel(TextChannelCreateSpec.builder()
+                .name("ticket-" + event.getUser().getUsername())
+                .parentId(Snowflake.of(categoryId))
+                .permissionOverwrites(Set.of(
+                        PermissionOverwrite.forRole(
+                                guild.getId(),
+                                PermissionSet.none(),
+                                PermissionSet.of(Permission.VIEW_CHANNEL)
+                        ),
 
-                            PermissionOverwrite.forMember(
-                                    event.getUser().getId(),
-                                    PermissionSet.of(Permission.VIEW_CHANNEL, Permission.SEND_MESSAGES),
-                                    PermissionSet.none()
-                            )
-                    ));
-                })
-                .then(event.reply("Salon créé !").withEphemeral(true));
+                        PermissionOverwrite.forMember(
+                                event.getUser().getId(),
+                                PermissionSet.of(Permission.VIEW_CHANNEL, Permission.SEND_MESSAGES),
+                                PermissionSet.none()
+                        )
+                )).build()
+        ).then(event.reply("Salon créé !").withEphemeral(true));
     }
 
     public static Mono<Void> sendTicketDashboard(TextChannelCreateEvent event) {
@@ -50,7 +51,6 @@ public class TicketListener {
                         Button.secondary("claim_ticket", "Prendre en charge")
                 )
         );
-
 
         if (event.getChannel().getName().startsWith("ticket-")) {
             return event.getChannel().createMessage(MessageCreateSpec.builder()

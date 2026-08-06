@@ -18,8 +18,7 @@ public class TicketCloseListener {
                         return event.deferReply().withEphemeral(true)
                                 .then(event.getInteraction().getChannel())
                                 .flatMap(messageChannel -> messageChannel.delete(
-                                        "Ticket fermé par " + event.getInteraction().getUser().getUsername()))
-                                .then();
+                                        "Ticket fermé par " + event.getInteraction().getUser().getUsername()));
                     }
                     return event.reply("Vous n'avez pas la permission de faire cela").withEphemeral(true);
                 });

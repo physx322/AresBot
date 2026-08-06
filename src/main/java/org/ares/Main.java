@@ -10,7 +10,7 @@ import org.ares.listeners.ListenerRegistry;
 import org.ares.listeners.tickets.TicketCloseListener;
 import org.ares.listeners.tickets.TicketListener;
 
-import static org.ares.listeners.tickets.TicketListener.CreateTicketSalon;
+import static org.ares.listeners.tickets.TicketListener.createTicketSalon;
 
 public class Main {
 
@@ -22,7 +22,7 @@ public class Main {
         gateway.on(ButtonInteractionEvent.class, event ->
                 switch (event.getCustomId()) {
                     case "main" -> event.reply("Bouton actionné").withEphemeral(true);
-                    case "ticket" -> CreateTicketSalon(event);
+                    case "ticket" -> createTicketSalon(event);
                     case "close_ticket" -> TicketCloseListener.CloseTicketRequest(event);
                     default -> event.reply("Action inconnue").withEphemeral(true);
                 }).subscribe();

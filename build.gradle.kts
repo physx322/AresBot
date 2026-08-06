@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "org.clicdroit"
+group = "org.ares"
 version = "1.0-SNAPSHOT"
 
 repositories {
