@@ -1,75 +1,49 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'jdk-21'
-    }
-
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/physx322/ClicBot.git',
-                    credentialsId: 'gh'
-            }
-        }
-
         stage('Build') {
             steps {
-                sh 'chmod +x gradlew'
-                sh './gradlew clean build -x test'
+                sh './gradlew build'
             }
         }
 
-        stage('Archive') {
+        stage('Build image') {
             steps {
-                archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
+                sh 'docker build -t ares-bot:${BRANCH_NAME} .'
+            }
+        }
+
+        stage('Deploy Preprod') {
+            when { branch 'develop' }
+            environment {
+                DISCORD_TOKEN = credentials('discord-token-preprod')
+            }
+            steps {
+                sh '''
+                    docker stop bot-preprod || true
+                    docker rm bot-preprod || true
+                    docker run -d --name bot-preprod \
+                        -e BOT_TOKEN=$DISCORD_TOKEN \
+                        ares-bot:develop
+                '''
+            }
+        }
+
+        stage('Deploy Prod') {
+            when { branch 'master' }
+            environment {
+                DISCORD_TOKEN = credentials('discord-token-prod')
+            }
+            steps {
+                sh '''
+                    docker stop bot-prod || true
+                    docker rm bot-prod || true
+                    docker run -d --name bot-prod \
+                        -e BOT_TOKEN=$DISCORD_TOKEN \
+                        ares-bot:master
+                '''
             }
         }
     }
-post {
-    success {
-        withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_URL')]) {
-            script {
-                def duration = currentBuild.durationString.replace(' and counting', '')
-                discordSend(
-                    webhookURL: "${DISCORD_URL}",
-                    title: "✅ Build réussi — ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    description: """
-                        **Projet:** ${env.JOB_NAME}
-                        **Branche:** ${env.GIT_BRANCH}
-                        **Commit:** ${env.GIT_COMMIT?.take(7)}
-                        **Auteur:** ${env.GIT_AUTHOR_NAME ?: 'N/A'}
-                        **Durée:** ${duration}
-                    """,
-                    link: env.BUILD_URL,
-                    successful: true,
-                    footer: "Jenkins Pipeline"
-                )
-            }
-        }
-    }
-    failure {
-        withCredentials([string(credentialsId: 'discord-webhook', variable: 'DISCORD_URL')]) {
-            script {
-                def duration = currentBuild.durationString.replace(' and counting', '')
-                discordSend(
-                    webhookURL: "${DISCORD_URL}",
-                    title: "❌ Build échoué — ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    description: """
-                        **Projet:** ${env.JOB_NAME}
-                        **Branche:** ${env.GIT_BRANCH}
-                        **Commit:** ${env.GIT_COMMIT?.take(7)}
-                        **Auteur:** ${env.GIT_AUTHOR_NAME ?: 'N/A'}
-                        **Durée:** ${duration}
-                        **Étape échouée:** ${env.STAGE_NAME ?: 'Inconnue'}
-                    """,
-                    link: env.BUILD_URL,
-                    result: currentBuild.currentResult,
-                    footer: "Jenkins Pipeline"
-                )
-            }
-        }
-    }
-}
 }
