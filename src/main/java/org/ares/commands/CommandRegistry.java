@@ -25,7 +25,7 @@ public class CommandRegistry {
         return commands.get(name);
     }
 
-    public void registerToDiscord(RestClient restClient, long guildId) {
+    public void registerToDiscord(RestClient restClient) {
         long applicationId = restClient.getApplicationId().block();
 
         List<discord4j.discordjson.json.ApplicationCommandRequest> requests = commands.values()
@@ -34,7 +34,7 @@ public class CommandRegistry {
                 .toList();
 
         restClient.getApplicationService()
-                .bulkOverwriteGuildApplicationCommand(applicationId, guildId, requests)
+                .bulkOverwriteGlobalApplicationCommand(applicationId, requests)
                 .subscribe();
     }
 
