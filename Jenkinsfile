@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'chmod +x ./gradlew'
-                sh './gradlew build'
+                sh './gradlew jar'
             }
         }
 
@@ -22,9 +22,9 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker stop bot-preprod || true
-                    docker rm bot-preprod || true
-                    docker run -d --name bot-preprod \
+                    docker stop ares-preprod || true
+                    docker rm ares-preprod || true
+                    docker run -d --name ares-preprod \
                         -e BOT_TOKEN=$DISCORD_TOKEN \
                         ares-bot:develop
                 '''
@@ -38,8 +38,8 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker stop bot-prod || true
-                    docker rm bot-prod || true
+                    docker stop ares-prod || true
+                    docker rm ares-prod || true
                     docker run -d --name bot-prod \
                         -e BOT_TOKEN=$DISCORD_TOKEN \
                         ares-bot:master

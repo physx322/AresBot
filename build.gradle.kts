@@ -1,5 +1,14 @@
 plugins {
-    id("java")
+    java
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
+tasks {
+    jar {
+        manifest {
+            attributes["Main-Class"] = "org.ares.Main"  // remplace par ton vrai chemin de classe
+        }
+    }
 }
 
 group = "org.ares"
