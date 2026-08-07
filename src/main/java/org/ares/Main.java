@@ -38,7 +38,6 @@ public class Main {
                     ));
                 });
 
-
         // Listeners des events bouton et autres.
         gateway.on(ButtonInteractionEvent.class, event ->
                 switch (event.getCustomId()) {
