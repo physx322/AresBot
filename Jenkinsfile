@@ -40,7 +40,7 @@ pipeline {
                 sh '''
                     docker stop ares-prod || true
                     docker rm ares-prod || true
-                    docker run -d --name bot-prod \
+                    docker run -d --name ares-prod \
                         -e BOT_TOKEN=$DISCORD_TOKEN \
                         ares-bot:master
                 '''
