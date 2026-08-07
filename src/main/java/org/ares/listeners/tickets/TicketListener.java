@@ -32,9 +32,9 @@ public class TicketListener {
         if (category == null) {
             return event.reply("La catégorie 'Ticket' n'existe pas sur ce serveur !").withEphemeral(true);
         }
-        if (tickets.containsValue(event.getUser().getUsername())) {
-            return event.reply("Vous avez déja un ticket d'ouvert !").withEphemeral(true);
-        } else {
+//        if (tickets.containsValue(event.getUser().getUsername())) {
+//           // return event.reply("Vous avez déja un ticket d'ouvert !").withEphemeral(true);
+//        } else {
             return guild.createTextChannel(TextChannelCreateSpec.builder()
                     .name("ticket-" + event.getUser().getUsername())
                     .parentId(category.getId())
@@ -58,8 +58,6 @@ public class TicketListener {
                     }
             );
         }
-
-    }
 
     public static Mono<Void> sendTicketDashboard(TextChannelCreateEvent event) {
         List<LayoutComponent> components = List.of(
